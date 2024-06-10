@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="greenPrimary">#048577</color>
+    <color name="greenSecondary">#8CE4FA</color>
+    <color name="myChat">#C7FD9A</color>
+    <color name="background">#17A3C08B</color>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1074209884457",
+    "project_id": "chatandroid-f5608",
+    "storage_bucket": "chatandroid-f5608.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074209884457:android:8fa05ce1d50765661c0f38",
+        "android_client_info": {
+          "package_name": "com.example.chatwebsocket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZWFk8CVjvQU-mvyVUZTaVUWucR1jztSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

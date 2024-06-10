@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ChatWebSocket</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="login">Iniciar Sesion</string>
+    <string name="register">Registrarse</string>
+
+    <string name="error_user_exist">Error, el usuario ya existe</string>
+    <string name="error_user_not_exist">Usuario o contraseña incorrectos</string>
+    <string name="error_fill_all_fields">Por favor llene todos los campos</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/itemChat"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/size_16">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@color/greenSecondary"
+        android:minWidth="300dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+
+    <TextView
+        android:id="@+id/autorET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_16"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintStart_toStartOf="@id/materialToolbar"
+        app:layout_constraintTop_toTopOf="@id/materialToolbar"
+        tools:text="JoseJuan" />
+
+    <TextView
+        android:id="@+id/textET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="@dimen/size_256"
+        android:paddingBottom="@dimen/size_16"
+        app:layout_constraintBottom_toBottomOf="@+id/materialToolbar"
+        app:layout_constraintStart_toStartOf="@+id/autorET"
+        app:layout_constraintTop_toBottomOf="@id/autorET"
+        tools:text="hoolaa esto es una frase de ejemplo más larga a ver xcfdfsdfasfsdfsfsafafsdfsdf" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.example.chatwebsocket.ui.view.ChatListFragment"
+        android:label="fragment_chat_list"
+        tools:layout="@layout/fragment_chat_list" >
+        <action
+            android:id="@+id/action_chatListFragment_to_chatFragment"
+            app:destination="@id/chatFragment">
+            <argument
+                android:name="chatId"
+                app:argType="long"
+                android:defaultValue="0L"
+            />
+            <argument
+                android:name="chatName"
+                app:argType="string"
+                app:nullable="true"
+                android:defaultValue="@null"
+                />
+        </action>
+        <action
+            android:id="@+id/action_chatListFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.chatwebsocket.ui.view.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.chatwebsocket.ui.view.WelcomeFragment"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome" >
+        <action
+            android:id="@+id/action_welcomeFragment_to_loginAndRegisterFragment"
+            app:destination="@id/loginAndRegisterFragment">
+            <argument
+                android:name="type"
+                app:argType="integer"
+                android:defaultValue="1" />
+        </action>
+        <action
+            android:id="@+id/action_welcomeFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginAndRegisterFragment"
+        android:name="com.example.chatwebsocket.ui.view.LoginAndRegisterFragment"
+        android:label="fragment_login_and_register"
+        tools:layout="@layout/fragment_login_and_register" >
+        <action
+            android:id="@+id/action_loginAndRegisterFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
+    </fragment>
+</navigation>
