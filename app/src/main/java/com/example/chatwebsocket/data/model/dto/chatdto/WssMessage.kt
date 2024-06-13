@@ -10,5 +10,7 @@ data class WssMessage(
 data class Message(
     @SerializedName("from") var from: String,
     @SerializedName("chat_id") var chatId: Long,
-    @SerializedName("date") var date: Int
+    @SerializedName("message_id") var messageId: String,
+    @SerializedName("date") var date: Int,
+    @SerializedName("type") var type: String
 )

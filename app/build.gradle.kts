@@ -23,7 +23,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://3647-217-113-248-140.ngrok-free.app/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://7860-217-113-248-140.ngrok-free.app/api/v1/\"")
             buildConfigField("String", "WSS_URL", "\"ws://www.my-api-rails.com/cable\"")
         }
         release {
@@ -32,7 +32,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"https://bf61-217-113-248-140.ngrok-free.app/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://d5c9-217-113-248-140.ngrok-free.app/api/v1/\"")
             buildConfigField("String", "WSS_URL", "\"ws://www.my-api-rails.com/cable\"")
         }
     }

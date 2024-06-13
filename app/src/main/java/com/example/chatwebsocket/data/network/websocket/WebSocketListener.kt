@@ -47,7 +47,9 @@ class WebSocketListener(): WebSocketListener() {
                 Message(
                     messageAux.getString("from"),
                     messageAux.getLong("chat_id"),
-                    messageAux.getInt("date")
+                    messageAux.getString("message_id"),
+                    messageAux.getInt("date"),
+                    messageAux.getString("type")
                 )
             )
             println("entra en la emisión")

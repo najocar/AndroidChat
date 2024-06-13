@@ -112,8 +112,8 @@ class ChatListFragment : Fragment() {
         binding.singOutBtn.setOnClickListener {
             lifecycleScope.launch {
                 chatDAO.deleteAll()
+                userProvider.logout(requireContext())
             }
-            userProvider.logout(requireContext())
             findNavController().navigate(R.id.action_chatListFragment_to_welcomeFragment)
         }
         return binding.root

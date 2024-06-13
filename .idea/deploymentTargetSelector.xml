@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-06-06T08:36:05.024720248Z">
+        <DropdownSelection timestamp="2024-06-12T10:45:19.718197605Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/home/najocar/.android/avd/Copy_of_Pixel_3a_API_34_extension_level_7_x86_64.avd" />

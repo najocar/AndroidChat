@@ -1,6 +1,7 @@
 package com.example.chatwebsocket.data.repository
 
 import com.example.chatwebsocket.data.model.dao.ChatDAO
+import com.example.chatwebsocket.data.model.dao.MessageDAO
 import com.example.chatwebsocket.data.model.dto.chatdto.MessageSendDTO
 import com.example.chatwebsocket.data.model.dto.chatdto.MessagesFrom
 import com.example.chatwebsocket.data.model.dto.local.MessageLocalDTO
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 class MessageRepository @Inject constructor(private val api: MessageApiClient) {
     @Inject lateinit var chatDAO : ChatDAO
+    @Inject lateinit var messageDAO : MessageDAO
     @Inject lateinit var userProvider: UserProvider
 
     suspend fun getMessagesFromChat(from: MessagesFrom): List<MessageModel> {
@@ -35,8 +37,22 @@ class MessageRepository @Inject constructor(private val api: MessageApiClient) {
         }
     }
 
+    suspend fun getMessage(id: String): MessageModel? {
+        return withContext(Dispatchers.IO) {
+            var response: MessageModel? = null
+            try {
+                response = api.getMessage(id)
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                throw ApiException()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            response
+        }
+    }
+
     suspend fun takeDB(id: Long) : List<MessageModel> {
-//        val response = chatDAO.getByIdWithMessages(id).messages.map { it.toMessageModel() }.toMutableList()
         val response = chatDAO.getMessagesByChatOrdered(id).map { it.toMessageModel() }.toMutableList()
         println("response de takeDB: ${response.size}")
         return response
@@ -62,9 +78,31 @@ class MessageRepository @Inject constructor(private val api: MessageApiClient) {
         }
     }
 
+    suspend fun updateMessage(message: MessageModel) {
+        withContext(Dispatchers.IO) {
+            try {
+                val messageSend = MessageSendDTO(message.content, message.id)
+                api.updateMessage(messageSend, messageSend.messageId)
+                messageDAO.upsertMessage(message.toMessageLocalDTO())
+//                chatDAO.upsertMessage(message.toMessageLocalDTO())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }
+    }
+
     suspend fun deleteMessage(message: MessageModel) {
         withContext(Dispatchers.IO) {
             api.deleteMessage(message.id)
+            chatDAO.deleteMessage(message.toMessageLocalDTO())
+        }
+    }
+
+    suspend fun deleteMessageA(message: MessageModel) {
+        withContext(Dispatchers.IO) {
             chatDAO.deleteMessage(message.toMessageLocalDTO())
         }
     }

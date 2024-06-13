@@ -36,11 +36,13 @@ class UserProvider @Inject constructor(private val userDAO: UserDAO) {
         userId = userToken.id.toInt()
     }
 
-    fun logout(context: Context){
+    suspend fun logout(context: Context){
         val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.clear()
         editor.apply()
+        val user = userDAO.selectFirst()
+        if (user != null) userDAO.delete(user)
         userToken = ""
         userId = 0
     }

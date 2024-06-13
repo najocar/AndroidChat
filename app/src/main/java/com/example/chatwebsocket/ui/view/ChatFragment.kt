@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,10 +14,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatwebsocket.data.model.entity.MessageModel
 import com.example.chatwebsocket.data.provider.UserProvider
 import com.example.chatwebsocket.databinding.FragmentChatBinding
 import com.example.chatwebsocket.ui.MessageListAdapter
 import com.example.chatwebsocket.ui.viewModel.ChatViewModel
+import com.example.chatwebsocket.ui.viewModel.MessageItem
 import com.example.chatwebsocket.utils.RecyclerItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,15 +58,27 @@ class ChatFragment : Fragment() {
                 override fun onItemClick(view: View?, position: Int) { }
 
                 override fun onLongItemClick(view: View?, position: Int) {
-                    println("long click")
                     val builder: AlertDialog.Builder = AlertDialog.Builder(context)
                     builder
-                        .setTitle("¿Eliminar el mensaje?")
-                        .setPositiveButton("Aceptar") { dialog, which ->
-                            chatVM.deleteMessage(chatVM.messagesList.value[position])
+                        .setTitle("Selecciona una opción")
+                        .setNegativeButton("Cancelar") { dialog, which ->
                         }
-                        .setNegativeButton("Candelar") { dialog, which ->
-                            // Do something else.
+                        .setItems(arrayOf("Editar", "Eliminar")) { dialog, which ->
+                            when(which) {
+                                0 -> {
+                                    showInputDialog(position)
+                                }
+                                1 -> {
+                                    val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+                                    builder
+                                        .setTitle("¿Eliminar el mensaje?")
+                                        .setPositiveButton("Aceptar") { dialog, which ->
+                                            chatVM.deleteMessage(MessageItem((chatVM.messagesList.value[position] as MessageItem).toMessageModel()))
+                                        }
+                                        .setNegativeButton("Cancelar") { dialog, which -> }
+                                        .show()
+                                }
+                            }
                         }
 
                     val dialog: AlertDialog = builder.create()
@@ -76,14 +91,33 @@ class ChatFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                println("lastVisibleItemPosition: $lastVisibleItemPosition")
-                if (lastVisibleItemPosition == 0 && !chatVM.isLoading) {
-                    loadMoreItems()
+                if (lastVisibleItemPosition == 0 && !chatVM.isLoader()) {
+                    recyclerView.post {
+                        loadMoreItems()
+                    }
                 }
             }
         })
 
         return binding.root
+    }
+
+    private fun showInputDialog(position: Int) {
+        val input = EditText(requireContext())
+        input.hint = "Escribe tu mensaje aquí"
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder.setTitle("Editar mensaje")
+            .setView(input)
+            .setPositiveButton("Aceptar") { dialog, which ->
+                val message = (chatVM.messagesList.value[position] as MessageItem).toMessageModel()
+                val messageUpdated = message.copy()
+                messageUpdated.content = input.text.toString()
+
+                chatVM.updateMessage(MessageItem(message), MessageItem(messageUpdated))
+            }
+            .setNegativeButton("Cancelar") { dialog, which -> dialog.cancel() }
+            .show()
     }
 
 

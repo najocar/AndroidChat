@@ -19,15 +19,19 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
 
     fun login(context: Context, user: UserLogin) {
         viewModelScope.launch {
-            val response = userRepository.login(context, user)
-            _logginState.emit(LoginState.Loading)
-            _logginState.emit(
-                if (response != null){
-                    LoginState.Success
-                } else {
-                    LoginState.Error
-                }
-            )
+            try {
+                val response = userRepository.login(context, user)
+                _logginState.emit(LoginState.Loading)
+                _logginState.emit(
+                    if (response != null){
+                        LoginState.Success
+                    } else {
+                        LoginState.Error
+                    }
+                )
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

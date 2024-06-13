@@ -1,6 +1,7 @@
 package com.example.chatwebsocket.data.model.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -24,4 +25,7 @@ interface UserDAO {
 
     @Update
     suspend fun update(user: UserLocalDTO)
+
+    @Delete
+    suspend fun delete(user: UserLocalDTO)
 }
