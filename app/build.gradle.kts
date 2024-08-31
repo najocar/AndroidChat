@@ -70,6 +70,7 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.paging.runtime)
 //    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
 //    implementation("com.google.firebase:firebase-analytics")
     implementation(platform(libs.firebase.bom))

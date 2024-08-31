@@ -2,6 +2,7 @@ package com.example.chatwebsocket.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatwebsocket.data.model.entity.ChatModel
@@ -18,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MessageListAdapter (
     var messagesList: MutableList<ListItemType>,
     private val userProvider: UserProvider
-) : RecyclerView.Adapter<MyViewHolder>() {
+) : PagingDataAdapter<User, UserViewHolder>(diffCallback) {
     private val ITEM_TYPE_LOADER = 0
     private val ITEM_TYPE_MESSAGE = 1
 

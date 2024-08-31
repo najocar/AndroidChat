@@ -1,5 +1,6 @@
 package com.example.chatwebsocket.data.model.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -9,6 +10,10 @@ import androidx.room.Upsert
 import com.example.chatwebsocket.data.model.dto.local.ChatAndMessagesLocalDTO
 import com.example.chatwebsocket.data.model.dto.local.ChatLocalDTO
 import com.example.chatwebsocket.data.model.dto.local.MessageLocalDTO
+import com.example.chatwebsocket.data.model.entity.MessageModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 @Dao
 interface ChatDAO {
@@ -23,20 +28,26 @@ interface ChatDAO {
     suspend fun getByIdWithMessages(id: Long): ChatAndMessagesLocalDTO
 
     @Query("""
-    SELECT * FROM messages 
+    SELECT * FROM messages
     WHERE chatId = :chatId 
     ORDER BY createdAt DESC
     LIMIT 10
     """)
-    suspend fun getMessagesByChatIdLimited(chatId: Long): List<MessageLocalDTO>
+    fun getMessagesByChatIdLimited(chatId: Long): Flow<List<MessageLocalDTO>>
 
-    suspend fun getMessagesByChatOrdered(chatId: Long): List<MessageLocalDTO> {
-        return getMessagesByChatIdLimited(chatId).reversed()
+    suspend fun getMessagesByChatOrdered(chatId: Long): Flow<List<MessageModel>> {
+//        return getMessagesByChatIdLimited(chatId)
+        return getMessagesByChatIdLimited(chatId).distinctUntilChanged().map { list ->
+            list.reversed().map { it.toMessageModel() }
+        }
     }
+
+    @Query("SELECT * FROM messages WHERE chatId = :query")
+    fun pagingSource(query: Int): PagingSource<Int, MessageLocalDTO>
 
     @Transaction
     @Upsert
-    suspend fun upsertMessage(vararg message: MessageLocalDTO)
+    fun upsertMessage(vararg message: MessageLocalDTO)
 
     @Insert
     suspend fun insertAll(vararg chats: ChatLocalDTO)

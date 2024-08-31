@@ -1,7 +1,9 @@
 package com.example.chatwebsocket.core
 
+import com.example.chatwebsocket.data.model.dao.ChatDAO
 import com.example.chatwebsocket.data.model.dao.UserDAO
 import com.example.chatwebsocket.data.provider.UserProvider
+import com.example.chatwebsocket.ui.MessagesPaging
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

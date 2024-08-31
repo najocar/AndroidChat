@@ -10,9 +10,12 @@ import com.example.chatwebsocket.data.network.MessageApiClient
 import com.example.chatwebsocket.data.provider.UserProvider
 import com.example.chatwebsocket.utils.exceptions.ApiException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.util.UUID
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MessageRepository @Inject constructor(private val api: MessageApiClient) {
@@ -20,13 +23,19 @@ class MessageRepository @Inject constructor(private val api: MessageApiClient) {
     @Inject lateinit var messageDAO : MessageDAO
     @Inject lateinit var userProvider: UserProvider
 
-    suspend fun getMessagesFromChat(from: MessagesFrom): List<MessageModel> {
-        return withContext(Dispatchers.IO) {
+    suspend fun getMessagesFromChat(from: MessagesFrom){
+        withContext(Dispatchers.IO) {
             var response: List<MessageModel> = emptyList()
             try {
+                println("pide mensajes")
                 var page = from.page ?: 1
                 response = api.getMessagesFromChat(page, from.from, from.chat)
-                response.map { chatDAO.upsertMessage(it.toMessageLocalDTO())}
+                response.map { chatDAO.upsertMessage(it.toMessageLocalDTO())
+//                    response.map { chatDAO.upsertMessage(it.toMessageLocalDTO()).collect(){
+//                    println(it)
+//                }
+
+                }
             } catch (e: HttpException) {
                 e.printStackTrace()
                 throw ApiException()
@@ -42,6 +51,7 @@ class MessageRepository @Inject constructor(private val api: MessageApiClient) {
             var response: MessageModel? = null
             try {
                 response = api.getMessage(id)
+                chatDAO.upsertMessage(response.toMessageLocalDTO())
             } catch (e: HttpException) {
                 e.printStackTrace()
                 throw ApiException()
@@ -52,12 +62,15 @@ class MessageRepository @Inject constructor(private val api: MessageApiClient) {
         }
     }
 
-    suspend fun takeDB(id: Long) : List<MessageModel> {
-        val response = chatDAO.getMessagesByChatOrdered(id).map { it.toMessageModel() }.toMutableList()
-        println("response de takeDB: ${response.size}")
-        return response
-    }
+//    suspend fun takeDB(id: Long) : List<MessageModel> {
+//        val response = chatDAO.getMessagesByChatOrdered(id).map { it.toMessageModel() }.toMutableList()
+//        println("response de takeDB: ${response.size}")
+//        return response
+//    }
 
+    suspend fun takeDB(id: Long): Flow<List<MessageModel>> {
+        return chatDAO.getMessagesByChatOrdered(id)
+    }
     suspend fun sendMessage(message: MessageSendDTO, chat: Long): MessageModel? {
         return withContext(Dispatchers.IO) {
             var response: MessageModel? = null

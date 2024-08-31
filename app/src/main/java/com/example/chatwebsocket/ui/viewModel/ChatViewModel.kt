@@ -5,11 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import androidx.paging.map
+import com.example.chatwebsocket.data.model.dao.ChatDAO
 import com.example.chatwebsocket.data.model.dto.chatdto.MessageSendDTO
 import com.example.chatwebsocket.data.model.dto.chatdto.MessagesFrom
 import com.example.chatwebsocket.data.model.entity.MessageModel
 import com.example.chatwebsocket.data.network.websocket.WebSocketListener
 import com.example.chatwebsocket.data.repository.MessageRepository
+import com.example.chatwebsocket.ui.MessagesPaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +34,7 @@ const val CHAT_NAME = "chatName"
 class ChatViewModel @Inject constructor(
     private val messageRepository: MessageRepository,
     private val webSocketListener: WebSocketListener,
+    private val chatDAO : ChatDAO,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val chatId = savedStateHandle.get<Long>(CHAT_ID) ?: 0L
@@ -40,23 +47,41 @@ class ChatViewModel @Inject constructor(
     var page = 1
     private var created = 0
 
+
+
     init {
+        val flow = Pager(
+            PagingConfig(pageSize = 20)
+        ) {
+            MessagesPaging(chatDAO, chatId.toInt())
+        }.flow
+            .cachedIn(viewModelScope)
+
         viewModelScope.launch {
-            val messagesFromDB = messageRepository.takeDB(chatId).toMutableList().map { MessageItem(it) }.toMutableList()
-            _messagesList.emit(messagesFromDB.toMutableList())
+            flow.collect() {
+                println(it)
+                it.map { println(it) }
+            }
+//            messageRepository.takeDB(chatId).collect() {
+//                println(it)
+//                it.forEach {
+//                    if (!_messagesList.value.contains(MessageItem(it))) {
+//                        goDown = true
+//                    }
+//                }
+//                _messagesList.value = it.toMutableList().map { MessageItem(it) }.toMutableList()
+//                goDown = false
+//            }
+        }
+        viewModelScope.launch {
             val messagesFrom = MessagesFrom(created, chatId, page)
             try {
-                val repositoryMessages = messageRepository.getMessagesFromChat(messagesFrom).toMutableList()
-                _messagesList.value = repositoryMessages.map { MessageItem(it) }.toMutableList()
-                goDown = false
-                val differences = messagesFromDB.subtract(_messagesList.value.toSet())
-                differences.map { messageRepository.deleteMessage((it as MessageItem).toMessageModel()) }
+                messageRepository.getMessagesFromChat(messagesFrom)
             } catch (e: Exception) {
-                goDown = false
                 e.printStackTrace()
             }
         }
-        subscribeToMessages()
+//        subscribeToMessages()
     }
 
     fun sendMessage(message: String) {
@@ -82,7 +107,7 @@ class ChatViewModel @Inject constructor(
             goDown = true
             try {
                 messagesFrom.page = 1
-                actualMessages.addAll(messageRepository.getMessagesFromChat(messagesFrom).toMutableList().map { MessageItem(it) })
+//                actualMessages.addAll(messageRepository.getMessagesFromChat(messagesFrom).toMutableList().map { MessageItem(it) })
             } catch (e : Exception) {
                 e.printStackTrace()
             }
@@ -150,7 +175,8 @@ class ChatViewModel @Inject constructor(
             created = actualMessages.filterIsInstance<MessageItem>().first().toMessageModel().createdAt
             messagesFrom.from = created
             try {
-                actualMessages.addAll(0, messageRepository.getMessagesFromChat(messagesFrom).map { MessageItem(it) })
+                messageRepository.getMessagesFromChat(messagesFrom)
+//                actualMessages.addAll(0, messageRepository.getMessagesFromChat(messagesFrom).map { MessageItem(it) })
             } catch (e : Exception) {
                 e.printStackTrace()
             }
